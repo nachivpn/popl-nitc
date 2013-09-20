@@ -5,7 +5,7 @@ Run instructions
 
 To run the interpreter
 
-./f <test_file.f>
+./f test.f
 
 To make after modifying
 
