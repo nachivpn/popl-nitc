@@ -14,6 +14,7 @@ type term =
   | TmIsZero of info * term
   | TmNot of info * term
   | TmAnd of info * term * term
+  | TmOr of info * term * term
   
 type command =
   | Eval of info * term

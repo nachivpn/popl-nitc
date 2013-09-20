@@ -32,6 +32,7 @@ open Syntax
 %token <Support.Error.info> ISZERO
 %token <Support.Error.info> AND
 %token <Support.Error.info> NOT
+%token <Support.Error.info> OR
 
 /* Identifier and constant value tokens */
 %token <string Support.Error.withinfo> UCID  /* uppercase-initial */
@@ -126,6 +127,8 @@ AppTerm :
 	{ TmNot($1,$2) }
   | AND ATerm ATerm
 	{ TmAnd($1,$2,$3) }
+  | OR ATerm ATerm
+	{ 
   
 /* Atomic terms are ones that never require extra parentheses */
 ATerm :

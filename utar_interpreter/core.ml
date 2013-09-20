@@ -7,12 +7,6 @@ open Support.Pervasive
 
 exception NoRuleApplies
 
-let andf x y = match (x,y) with
-	(TmTrue(_),TmFalse(_)) -> TmFalse(dummyinfo) 
-	| (TmFalse(_),TmTrue(_)) -> TmFalse(dummyinfo)
-	| (TmFalse(_),TmFalse(_)) -> TmFalse(dummyinfo)
-	| (TmTrue(_),TmTrue(_)) -> TmTrue(dummyinfo) 
-	  
 let rec isnumericval t = match t with
     TmZero(_) -> true
   | TmSucc(_,t1) -> isnumericval t1
@@ -54,7 +48,7 @@ let rec eval1 t = match t with
 	TmFalse(dummyinfo)
   | TmNot(_,TmFalse(_)) ->
 	TmTrue(dummyinfo)
-    | TmNot(fi,t1) ->
+  | TmNot(fi,t1) ->
 	let t1' = eval1 t1 in
 	TmNot(fi,t1')
   | TmAnd(_,TmTrue(_),TmFalse(_)) ->
@@ -65,12 +59,26 @@ let rec eval1 t = match t with
 	TmFalse(dummyinfo)
   | TmAnd(_,TmTrue(_),TmTrue(_)) ->
 	TmTrue(dummyinfo)
+  | TmAnd(fi,nv1,t2) when (isval nv1) ->
+	let t2' = eval1 t2 in
+	TmAnd(fi,nv1,t2')
   | TmAnd(fi,t1,t2) ->
 	let t1' = eval1 t1 in
 	TmAnd(fi,t1',t2)
-  | TmAnd(fi,nv1,t2) when (isval nv1)->
+  | TmOr(_,TmTrue(_),TmFalse(_)) ->
+	TmTrue(dummyinfo)
+  | TmOr(_,TmFalse(_),TmTrue(_)) ->
+	TmTrue(dummyinfo)
+  | TmOr(_,TmFalse(_),TmFalse(_)) ->
+	TmFalse(dummyinfo)
+  | TmOr(_,TmTrue(_),TmTrue(_)) ->
+	TmTrue(dummyinfo)
+  | TmOr(fi,nv1,t2) when (isval nv1) ->
 	let t2' = eval1 t2 in
-	TmAnd(fi,nv1,t2')
+	TmOr(fi,nv1,t2')  
+  | TmOr(fi,t1,t2) ->
+	let t1' = eval1 t1 in
+	TmOr(fi,t1',t2)
   | _ -> 
       raise NoRuleApplies
 

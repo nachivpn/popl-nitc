@@ -1,8 +1,3 @@
-/* Examples for testing */
-
-/*true;
-succ (pred 3);
-iszero (pred (succ (succ 0))); 
-if true then 0 else 1;*/ 
-not true;
-and true false;
+if (and true false) then 0 else succ 0;
+iszero (or true true);
+succ (and 0 true);

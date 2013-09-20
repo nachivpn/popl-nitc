@@ -21,6 +21,7 @@ let reservedWords = [
   ("iszero", fun i -> Parser.ISZERO i);
   ("not", fun i -> Parser.NOT i);
   ("and", fun i -> Parser.AND i);
+  ("or", fun i -> Parser.OR i);
   
   (* Symbols *)
   ("_", fun i -> Parser.USCORE i);
