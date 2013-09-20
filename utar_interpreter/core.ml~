@@ -18,6 +18,7 @@ let rec isnumericval t = match t with
   | TmSucc(_,t1) -> isnumericval t1
   | _ -> false
 
+
 let rec isval t = match t with
     TmTrue(_)  -> true
   | TmFalse(_) -> true
@@ -49,14 +50,27 @@ let rec eval1 t = match t with
   | TmIsZero(fi,t1) ->
       let t1' = eval1 t1 in
       TmIsZero(fi, t1')
+  | TmNot(_,TmTrue(_)) ->
+	TmFalse(dummyinfo)
+  | TmNot(_,TmFalse(_)) ->
+	TmTrue(dummyinfo)
+    | TmNot(fi,t1) ->
+	let t1' = eval1 t1 in
+	TmNot(fi,t1')
+  | TmAnd(_,TmTrue(_),TmFalse(_)) ->
+	TmFalse(dummyinfo)
+  | TmAnd(_,TmFalse(_),TmTrue(_)) ->
+	TmFalse(dummyinfo)
+  | TmAnd(_,TmFalse(_),TmFalse(_)) ->
+	TmFalse(dummyinfo)
+  | TmAnd(_,TmTrue(_),TmTrue(_)) ->
+	TmTrue(dummyinfo)
   | TmAnd(fi,t1,t2) ->
-	let t1' = eval t1 in
+	let t1' = eval1 t1 in
 	TmAnd(fi,t1',t2)
-  | TmAnd(fi,nv1,t2) when (isval nv1) ->
+  | TmAnd(fi,nv1,t2) when (isval nv1)->
 	let t2' = eval t2 in
 	TmAnd(fi,nv1,t2')
-  | TmAnd(_,nv1,nv2) when (and (isval nv1) (isval nv2)) ->
-	(andf nv1 nv2) 	
   | _ -> 
       raise NoRuleApplies
 

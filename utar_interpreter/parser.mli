@@ -8,6 +8,7 @@ type token =
   | PRED of (Support.Error.info)
   | ISZERO of (Support.Error.info)
   | AND of (Support.Error.info)
+  | NOT of (Support.Error.info)
   | UCID of (string Support.Error.withinfo)
   | LCID of (string Support.Error.withinfo)
   | INTV of (int Support.Error.withinfo)

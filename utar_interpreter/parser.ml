@@ -8,6 +8,7 @@ type token =
   | PRED of (Support.Error.info)
   | ISZERO of (Support.Error.info)
   | AND of (Support.Error.info)
+  | NOT of (Support.Error.info)
   | UCID of (string Support.Error.withinfo)
   | LCID of (string Support.Error.withinfo)
   | INTV of (int Support.Error.withinfo)
@@ -57,7 +58,7 @@ let _ = parse_error;;
 open Support.Error
 open Support.Pervasive
 open Syntax
-# 61 "parser.ml"
+# 62 "parser.ml"
 let yytransl_const = [|
     0|]
 
@@ -71,90 +72,94 @@ let yytransl_block = [|
   263 (* PRED *);
   264 (* ISZERO *);
   265 (* AND *);
-  266 (* UCID *);
-  267 (* LCID *);
-  268 (* INTV *);
-  269 (* FLOATV *);
-  270 (* STRINGV *);
-  271 (* APOSTROPHE *);
-  272 (* DQUOTE *);
-  273 (* ARROW *);
-  274 (* BANG *);
-  275 (* BARGT *);
-  276 (* BARRCURLY *);
-  277 (* BARRSQUARE *);
-  278 (* COLON *);
-  279 (* COLONCOLON *);
-  280 (* COLONEQ *);
-  281 (* COLONHASH *);
-  282 (* COMMA *);
-  283 (* DARROW *);
-  284 (* DDARROW *);
-  285 (* DOT *);
+  266 (* NOT *);
+  267 (* UCID *);
+  268 (* LCID *);
+  269 (* INTV *);
+  270 (* FLOATV *);
+  271 (* STRINGV *);
+  272 (* APOSTROPHE *);
+  273 (* DQUOTE *);
+  274 (* ARROW *);
+  275 (* BANG *);
+  276 (* BARGT *);
+  277 (* BARRCURLY *);
+  278 (* BARRSQUARE *);
+  279 (* COLON *);
+  280 (* COLONCOLON *);
+  281 (* COLONEQ *);
+  282 (* COLONHASH *);
+  283 (* COMMA *);
+  284 (* DARROW *);
+  285 (* DDARROW *);
+  286 (* DOT *);
     0 (* EOF *);
-  286 (* EQ *);
-  287 (* EQEQ *);
-  288 (* EXISTS *);
-  289 (* GT *);
-  290 (* HASH *);
-  291 (* LCURLY *);
-  292 (* LCURLYBAR *);
-  293 (* LEFTARROW *);
-  294 (* LPAREN *);
-  295 (* LSQUARE *);
-  296 (* LSQUAREBAR *);
-  297 (* LT *);
-  298 (* RCURLY *);
-  299 (* RPAREN *);
-  300 (* RSQUARE *);
-  301 (* SEMI *);
-  302 (* SLASH *);
-  303 (* STAR *);
-  304 (* TRIANGLE *);
-  305 (* USCORE *);
-  306 (* VBAR *);
+  287 (* EQ *);
+  288 (* EQEQ *);
+  289 (* EXISTS *);
+  290 (* GT *);
+  291 (* HASH *);
+  292 (* LCURLY *);
+  293 (* LCURLYBAR *);
+  294 (* LEFTARROW *);
+  295 (* LPAREN *);
+  296 (* LSQUARE *);
+  297 (* LSQUAREBAR *);
+  298 (* LT *);
+  299 (* RCURLY *);
+  300 (* RPAREN *);
+  301 (* RSQUARE *);
+  302 (* SEMI *);
+  303 (* SLASH *);
+  304 (* STAR *);
+  305 (* TRIANGLE *);
+  306 (* USCORE *);
+  307 (* VBAR *);
     0|]
 
 let yylhs = "\255\255\
 \001\000\001\000\002\000\003\000\003\000\004\000\004\000\004\000\
-\004\000\004\000\005\000\005\000\005\000\005\000\000\000"
+\004\000\004\000\004\000\005\000\005\000\005\000\005\000\000\000"
 
 let yylen = "\002\000\
 \001\000\003\000\001\000\001\000\006\000\001\000\002\000\002\000\
-\002\000\003\000\003\000\001\000\001\000\001\000\002\000"
+\002\000\002\000\003\000\003\000\001\000\001\000\001\000\002\000"
 
 let yydefred = "\000\000\
-\000\000\000\000\000\000\012\000\013\000\000\000\000\000\000\000\
-\000\000\014\000\001\000\000\000\015\000\000\000\003\000\004\000\
-\006\000\000\000\007\000\008\000\009\000\000\000\000\000\000\000\
-\000\000\010\000\011\000\002\000\000\000\000\000\005\000"
+\000\000\000\000\000\000\013\000\014\000\000\000\000\000\000\000\
+\000\000\000\000\015\000\001\000\000\000\016\000\000\000\003\000\
+\004\000\006\000\000\000\007\000\008\000\009\000\000\000\010\000\
+\000\000\000\000\000\000\011\000\012\000\002\000\000\000\000\000\
+\005\000"
 
 let yydgoto = "\002\000\
-\013\000\014\000\015\000\016\000\017\000"
+\014\000\015\000\016\000\017\000\018\000"
 
-let yysindex = "\017\000\
-\001\000\000\000\255\254\000\000\000\000\005\255\005\255\005\255\
-\005\255\000\000\000\000\255\254\000\000\213\254\000\000\000\000\
-\000\000\017\255\000\000\000\000\000\000\005\255\233\254\001\000\
-\255\254\000\000\000\000\000\000\019\255\255\254\000\000"
+let yysindex = "\019\000\
+\001\000\000\000\255\254\000\000\000\000\006\255\006\255\006\255\
+\006\255\006\255\000\000\000\000\255\254\000\000\212\254\000\000\
+\000\000\000\000\019\255\000\000\000\000\000\000\006\255\000\000\
+\234\254\001\000\255\254\000\000\000\000\000\000\021\255\255\254\
+\000\000"
 
 let yyrindex = "\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\000\000\000\000\000\000\000\000\000\000\000\000"
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\000\000"
 
 let yygindex = "\000\000\
-\255\255\000\000\009\000\000\000\007\000"
+\255\255\000\000\010\000\000\000\008\000"
 
-let yytablesize = 295
+let yytablesize = 296
 let yytable = "\003\000\
-\011\000\024\000\004\000\005\000\006\000\007\000\008\000\009\000\
-\004\000\005\000\010\000\018\000\019\000\020\000\021\000\022\000\
-\010\000\001\000\025\000\027\000\023\000\030\000\028\000\000\000\
-\000\000\000\000\000\000\000\000\026\000\000\000\000\000\000\000\
-\000\000\029\000\000\000\000\000\012\000\000\000\031\000\000\000\
-\000\000\000\000\012\000\000\000\000\000\000\000\000\000\000\000\
+\012\000\026\000\004\000\005\000\006\000\007\000\008\000\009\000\
+\010\000\004\000\005\000\011\000\019\000\020\000\021\000\022\000\
+\023\000\024\000\011\000\001\000\027\000\029\000\025\000\032\000\
+\030\000\000\000\000\000\000\000\000\000\000\000\028\000\000\000\
+\000\000\000\000\000\000\000\000\031\000\013\000\000\000\000\000\
+\000\000\033\000\000\000\000\000\013\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -182,18 +187,18 @@ let yytable = "\003\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\003\000\000\000\000\000\004\000\005\000\006\000\007\000\
-\008\000\009\000\000\000\000\000\010\000\000\000\000\000\000\000\
+\008\000\009\000\010\000\000\000\000\000\011\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\000\000\000\000\000\000\000\000\000\000\012\000"
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\013\000"
 
 let yycheck = "\001\001\
-\000\000\045\001\004\001\005\001\006\001\007\001\008\001\009\001\
-\004\001\005\001\012\001\003\000\006\000\007\000\008\000\009\000\
-\012\001\001\000\002\001\043\001\012\000\003\001\024\000\255\255\
-\255\255\255\255\255\255\255\255\022\000\255\255\255\255\255\255\
-\255\255\025\000\255\255\255\255\038\001\255\255\030\000\255\255\
-\255\255\255\255\038\001\255\255\255\255\255\255\255\255\255\255\
+\000\000\046\001\004\001\005\001\006\001\007\001\008\001\009\001\
+\010\001\004\001\005\001\013\001\003\000\006\000\007\000\008\000\
+\009\000\010\000\013\001\001\000\002\001\044\001\013\000\003\001\
+\026\000\255\255\255\255\255\255\255\255\255\255\023\000\255\255\
+\255\255\255\255\255\255\255\255\027\000\039\001\255\255\255\255\
+\255\255\032\000\255\255\255\255\039\001\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
@@ -221,10 +226,10 @@ let yycheck = "\001\001\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\001\001\255\255\255\255\004\001\005\001\006\001\007\001\
-\008\001\009\001\255\255\255\255\012\001\255\255\255\255\255\255\
+\008\001\009\001\010\001\255\255\255\255\013\001\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
-\255\255\255\255\255\255\255\255\255\255\255\255\038\001"
+\255\255\255\255\255\255\255\255\255\255\255\255\255\255\039\001"
 
 let yynames_const = "\
   "
@@ -239,6 +244,7 @@ let yynames_block = "\
   PRED\000\
   ISZERO\000\
   AND\000\
+  NOT\000\
   UCID\000\
   LCID\000\
   INTV\000\
@@ -288,34 +294,34 @@ let yyact = [|
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : Support.Error.info) in
     Obj.repr(
-# 98 "parser.mly"
+# 99 "parser.mly"
       ( [] )
-# 294 "parser.ml"
+# 300 "parser.ml"
                :  Syntax.command list ))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'Command) in
     let _2 = (Parsing.peek_val __caml_parser_env 1 : Support.Error.info) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 :  Syntax.command list ) in
     Obj.repr(
-# 100 "parser.mly"
+# 101 "parser.mly"
       ( let cmd = _1 in
           let cmds = _3 in
           cmd::cmds )
-# 305 "parser.ml"
+# 311 "parser.ml"
                :  Syntax.command list ))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'Term) in
     Obj.repr(
-# 107 "parser.mly"
+# 108 "parser.mly"
       ( (let t = _1 in Eval(tmInfo t,t)) )
-# 312 "parser.ml"
+# 318 "parser.ml"
                : 'Command))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'AppTerm) in
     Obj.repr(
-# 111 "parser.mly"
+# 112 "parser.mly"
       ( _1 )
-# 319 "parser.ml"
+# 325 "parser.ml"
                : 'Term))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 5 : Support.Error.info) in
@@ -325,82 +331,90 @@ let yyact = [|
     let _5 = (Parsing.peek_val __caml_parser_env 1 : Support.Error.info) in
     let _6 = (Parsing.peek_val __caml_parser_env 0 : 'Term) in
     Obj.repr(
-# 113 "parser.mly"
+# 114 "parser.mly"
       ( TmIf(_1, _2, _4, _6) )
-# 331 "parser.ml"
+# 337 "parser.ml"
                : 'Term))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'ATerm) in
     Obj.repr(
-# 117 "parser.mly"
+# 118 "parser.mly"
       ( _1 )
-# 338 "parser.ml"
+# 344 "parser.ml"
                : 'AppTerm))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : Support.Error.info) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'ATerm) in
     Obj.repr(
-# 119 "parser.mly"
+# 120 "parser.mly"
       ( TmSucc(_1, _2) )
-# 346 "parser.ml"
+# 352 "parser.ml"
                : 'AppTerm))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : Support.Error.info) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'ATerm) in
     Obj.repr(
-# 121 "parser.mly"
+# 122 "parser.mly"
       ( TmPred(_1, _2) )
-# 354 "parser.ml"
+# 360 "parser.ml"
                : 'AppTerm))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : Support.Error.info) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'ATerm) in
     Obj.repr(
-# 123 "parser.mly"
+# 124 "parser.mly"
       ( TmIsZero(_1, _2) )
-# 362 "parser.ml"
+# 368 "parser.ml"
+               : 'AppTerm))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 1 : Support.Error.info) in
+    let _2 = (Parsing.peek_val __caml_parser_env 0 : 'ATerm) in
+    Obj.repr(
+# 126 "parser.mly"
+ ( TmNot(_1,_2) )
+# 376 "parser.ml"
                : 'AppTerm))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : Support.Error.info) in
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'ATerm) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'ATerm) in
     Obj.repr(
-# 125 "parser.mly"
-      ( TmAnd(_1,_2) )
-# 371 "parser.ml"
+# 128 "parser.mly"
+ ( TmAnd(_1,_2,_3) )
+# 385 "parser.ml"
                : 'AppTerm))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : Support.Error.info) in
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'Term) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : Support.Error.info) in
     Obj.repr(
-# 130 "parser.mly"
+# 133 "parser.mly"
       ( _2 )
-# 380 "parser.ml"
-               : 'ATerm))
-; (fun __caml_parser_env ->
-    let _1 = (Parsing.peek_val __caml_parser_env 0 : Support.Error.info) in
-    Obj.repr(
-# 132 "parser.mly"
-      ( TmTrue(_1) )
-# 387 "parser.ml"
-               : 'ATerm))
-; (fun __caml_parser_env ->
-    let _1 = (Parsing.peek_val __caml_parser_env 0 : Support.Error.info) in
-    Obj.repr(
-# 134 "parser.mly"
-      ( TmFalse(_1) )
 # 394 "parser.ml"
+               : 'ATerm))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 0 : Support.Error.info) in
+    Obj.repr(
+# 135 "parser.mly"
+      ( TmTrue(_1) )
+# 401 "parser.ml"
+               : 'ATerm))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 0 : Support.Error.info) in
+    Obj.repr(
+# 137 "parser.mly"
+      ( TmFalse(_1) )
+# 408 "parser.ml"
                : 'ATerm))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : int Support.Error.withinfo) in
     Obj.repr(
-# 136 "parser.mly"
+# 139 "parser.mly"
       ( let rec f n = match n with
               0 -> TmZero(_1.i)
             | n -> TmSucc(_1.i, f (n-1))
           in f _1.v )
-# 404 "parser.ml"
+# 418 "parser.ml"
                : 'ATerm))
 (* Entry toplevel *)
 ; (fun __caml_parser_env -> raise (Parsing.YYexit (Parsing.peek_val __caml_parser_env 0)))

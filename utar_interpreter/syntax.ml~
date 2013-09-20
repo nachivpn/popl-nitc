@@ -13,6 +13,8 @@ type term =
   | TmSucc of info * term
   | TmPred of info * term
   | TmIsZero of info * term	
+  | TmNot of info * term
+  | TmAnd of info * term * term 
 
 type command =
   | Eval of info * term
@@ -27,9 +29,10 @@ let tmInfo t = match t with
   | TmZero(fi) -> fi
   | TmSucc(fi,_) -> fi
   | TmPred(fi,_) -> fi
-  | TmIsZero(fi,_) -> fi 
+  | TmIsZero(fi,_) -> fi
+  | TmNot(fi,_) -> fi 
   | TmAnd(fi,_,_) -> fi
-
+  
 (* ---------------------------------------------------------------------- *)
 (* Printing *)
 
@@ -70,6 +73,8 @@ and printtm_AppTerm outer t = match t with
        pr "pred "; printtm_ATerm false t1
   | TmIsZero(_,t1) ->
        pr "iszero "; printtm_ATerm false t1
+  | TmNot (_,t1) -> 
+	pr "not"; printtm_ATerm false t1
   | t -> printtm_ATerm outer t
 
 and printtm_ATerm outer t = match t with
@@ -82,7 +87,7 @@ and printtm_ATerm outer t = match t with
          TmZero(_) -> pr (string_of_int n)
        | TmSucc(_,s) -> f (n+1) s
        | _ -> (pr "(succ "; printtm_ATerm false t1; pr ")")
-     in f 1 t1
+     in f 1 t1	
   | t -> pr "("; printtm_Term outer t; pr ")"
 
 let printtm t = printtm_Term true t 

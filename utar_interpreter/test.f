@@ -1,8 +1,8 @@
 /* Examples for testing */
 
-true;
-if true then 0 else 1; 
-
-0; 
+/*true;
 succ (pred 3);
 iszero (pred (succ (succ 0))); 
+if true then 0 else 1;*/ 
+not true;
+and true false;
