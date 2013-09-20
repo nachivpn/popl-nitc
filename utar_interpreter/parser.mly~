@@ -121,7 +121,7 @@ AppTerm :
       { TmPred($1, $2) }
   | ISZERO ATerm
       { TmIsZero($1, $2) }
-  | AND ATerm ATerm
+  | AND ATerm Aterm
       { TmAnd($1,$2) }
 
 /* Atomic terms are ones that never require extra parentheses */
