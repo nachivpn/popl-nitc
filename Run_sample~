@@ -1,0 +1,101 @@
+Run instructions
+----------------
+$ ocaml
+
+# *Copy paste the code here and press enter*
+# *Call the function with the parameter*
+
+Sample for insertion sort
+-------------------------
+
+[nachi@localhost ocaml-programs]$ ocaml
+        OCaml version 4.00.1
+
+# let notempty li = if (li = []) then false else true;;
+
+let rec last li = if (List.tl li)=[] then List.hd li else last (List.tl li);;
+
+let rec insert x li = match li with
+	[] -> [x]
+	| hd::tl -> if x < (List.hd li) then x::li else (List.hd li) :: insert x (List.tl li);;
+
+let rec dequeue q = if((notempty q) && notempty(List.tl q)) then ((List.hd q) :: (dequeue (List.tl q))) else [];;
+ 
+let rec sort q = if notempty q then (insert (last q) (sort (dequeue q))) else [];;   val notempty : 'a list -> bool = <fun>
+#   val last : 'a list -> 'a = <fun>
+#       val insert : 'a -> 'a list -> 'a list = <fun>
+#   val dequeue : 'a list -> 'a list = <fun>
+#   
+val sort : 'a list -> 'a list = <fun>
+*--------------------------------------------Test cases---------------------------------------*
+# sort [5;4;3;2;1];;
+- : int list = [1; 2; 3; 4; 5]
+
+Sample for BST
+--------------
+
+[nachi@localhost ocaml-programs]$ ocaml
+        OCaml version 4.00.1
+
+# type btree= Empty | Node of int*btree*btree;;
+
+let bst = ref Empty;;
+
+let rec search_bst x t = match t with
+	Empty -> "Not present"
+	| Node(y,left,right) -> if x=y then "Present" else if x<y then (search_bst x left) else (search_bst x right) ;; 
+
+let rec insert x t = match t with
+	Empty -> Node(x, Empty, Empty)
+	| Node(y,left,right) -> if x<y then Node(y,insert x left,right) else Node(y,left,insert x right);;type btree = Empty | Node of int * btree * btree
+#   val bst : btree ref = {contents = Empty}
+#       val search_bst : int -> btree -> string = <fun>
+#       
+val insert : int -> btree -> btree = <fun>
+*--------------------------------------------Test cases---------------------------------------*
+# bst:= insert 2 !bst;;
+- : unit = ()
+# bst:= insert 3 !bst;;
+- : unit = ()
+# bst:= insert 1 !bst;;
+- : unit = ()
+# bst;;
+- : btree ref =
+{contents = Node (2, Node (1, Empty, Empty), Node (3, Empty, Empty))}
+# search_bst 3 !bst;;
+- : string = "Present"
+# search_bst 4 !bst;;
+- : string = "Not present"
+
+
+
+Sample for Queue
+----------------
+[nachi@localhost ocaml-programs]$ ocaml
+        OCaml version 4.00.1
+
+# let enqueue q l = q::l;;
+
+let ret = fun x -> x;;
+
+let notempty li = if (li = []) then false else true;;
+
+let rec dequeue q = if((notempty q) && notempty(List.tl q)) then ((List.hd q) :: (dequeue (List.tl q))) else [];;
+
+let print q = List.map ret q;;
+val enqueue : 'a -> 'a list -> 'a list = <fun>
+#   val ret : 'a -> 'a = <fun>
+#   val notempty : 'a list -> bool = <fun>
+#   val dequeue : 'a list -> 'a list = <fun>
+#   val print : 'a list -> 'a list = <fun>
+# 
+*--------------------------------------------Test cases---------------------------------------*
+# enqueue 1 [2;3;4];;
+- : int list = [1; 2; 3; 4]
+# dequeue [1;2;3;4];;
+- : int list = [1; 2; 3]
+
+
+
+
+

@@ -77,8 +77,8 @@ and printtm_AppTerm outer t = match t with
        pr "iszero "; printtm_ATerm false t1
   | TmNot (_,t1) -> 
 	pr "not"; printtm_ATerm false t1
-  | TmAnd (_,t1,t2) -> (pr "and"; printtm_ATerm false t1; printtm_ATerm false t2)
-  | TmOr (_,t1,t2) -> (pr "or"; printtm_ATerm false t1; printtm_ATerm false t2)
+  | TmAnd (_,t1,t2) -> (pr "and"; print_space(); printtm_ATerm false t1; print_space(); printtm_ATerm false t2)
+  | TmOr (_,t1,t2) -> (pr "or"; print_space(); printtm_ATerm false t1; print_space(); printtm_ATerm false t2)
   | t -> printtm_ATerm outer t
 
 and printtm_ATerm outer t = match t with

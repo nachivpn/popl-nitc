@@ -1,0 +1,5 @@
+[sam@localhost utar_interpreter]$ ./f test.f
+1
+(iszero true)
+(succ (and0true))
+
