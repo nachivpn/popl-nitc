@@ -22,6 +22,7 @@ type term =
   | TmPair of info * term * term
   | TmMkpair of info * term * term
   | TmFst of info * term
+  | TmSnd of info * term
 
 type binding =
     NameBind 

@@ -179,6 +179,8 @@ AppTerm :
      {  fun ctx -> TmMkpair($1,$2 ctx,$3 ctx) }
   | FST AppTerm
      { fun ctx -> TmFst($1,$2 ctx) }
+  | SND AppTerm
+     { fun ctx -> TmSnd($1,$2 ctx) }
   
 /* Atomic terms are ones that never require extra parentheses */
 ATerm :

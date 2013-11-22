@@ -23,6 +23,7 @@ type term =
   | TmPair of info * term * term
   | TmMkpair of info * term * term
   | TmFst of info * term
+  | TmSnd of info * term 
 
 type binding =
     NameBind 
@@ -88,6 +89,7 @@ let tmmap onvar c t =
   | TmPair(fi,t1,t2) -> TmPair(fi,walk c t1,walk c t2)
   | TmMkpair(fi,t1,t2) -> TmMkpair(fi,walk c t1,walk c t2)
   | TmFst(fi,t1) -> TmFst(fi, walk c t1)
+  | TmSnd(fi,t1) -> TmSnd(fi, walk c t1)
   in walk c t
 
 let termShiftAbove d c t =
@@ -140,6 +142,7 @@ let tmInfo t = match t with
   | TmPair(fi,_,_) -> fi
   | TmMkpair(fi,_,_) -> fi
   | TmFst(fi,_) -> fi
+  | TmSnd(fi,_) -> fi
 (* ---------------------------------------------------------------------- *)
 (* Printing *)
 

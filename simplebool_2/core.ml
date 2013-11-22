@@ -51,6 +51,13 @@ let rec eval1 ctx t = match t with
   | TmFst(fi,t1) ->
 	let t1' = eval1 ctx t1 in
         TmFst(fi,t1')    
+  | TmSnd(fi,vp1) when isval ctx vp1->
+      (match vp1 with 
+	TmPair(fi,v1,v2) -> v2
+	| _ -> raise NoRuleApplies )
+  | TmSnd(fi,t1) ->
+	let t1' = eval1 ctx t1 in
+        TmSnd(fi,t1')    
   | _ -> 
       raise NoRuleApplies
 
@@ -89,12 +96,17 @@ let rec typeof ctx t =
   | TmMkpair(fi,t1,t2) ->
      let tyT1 = typeof ctx t1 in
      if (=) tyT1 (typeof ctx t2) then TyCp(tyT1,tyT1)
-     else error fi "type mismatch in pair"    
+     else error fi "Type mismatch in pair"    
   | TmFst(fi,t1) ->
      let tyT1 = typeof ctx t1 in
      (match tyT1 with 
 	TyCp(tyT11,tyT12) -> tyT11
-	| _ -> error fi "wrong argument for fst")
+	| _ -> error fi "Bad argument for fst")
+  | TmSnd(fi,t1) ->
+     let tyT1 = typeof ctx t1 in
+     (match tyT1 with 
+	TyCp(tyT11,tyT12) -> tyT12
+	| _ -> error fi "Bad argument for snd")
   | TmIf(fi,t1,t2,t3) ->
      if (=) (typeof ctx t1) TyBool then
        let tyT2 = typeof ctx t2 in

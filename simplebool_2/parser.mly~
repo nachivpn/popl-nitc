@@ -194,6 +194,6 @@ ATerm :
   | UNIT
       { fun ctx -> TmUnit($1) }
   | LCURLY Term COMMA Term RCURLY
-      { fun ctx -> TmPair($1,$2 ctx,$4 ctx) }
+      { fun ctx -> TmMkpair($1,$2 ctx,$4 ctx) }
 
 /*   */
