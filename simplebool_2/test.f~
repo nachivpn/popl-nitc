@@ -1,0 +1,7 @@
+/* Examples for testing */
+
+
+ {true,false};
+ {unit,unit};
+ unit;
+ let x=true in {x,false};
