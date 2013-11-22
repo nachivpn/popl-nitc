@@ -41,6 +41,14 @@ let rec eval1 ctx t = match t with
   | TmPair(fi,t1,t2) ->
       let t1'= eval1 ctx t1 in
       TmPair(fi,t1',t2)
+  | TmMkpair(fi,v1,v2) when (isval ctx v1) & (isval ctx v2) -> 
+      TmPair(fi,v1,v2)
+  | TmMkpair(fi,v1,t2) when isval ctx v1 -> 
+      let t2' = eval1 ctx t2 in
+      TmPair(fi,v1,t2')
+  | TmMkpair(fi,t1,t2) ->
+      let t1'= eval1 ctx t1 in
+      TmPair(fi,t1',t2)
   | _ -> 
       raise NoRuleApplies
 
@@ -79,7 +87,11 @@ let rec typeof ctx t =
   | TmPair(fi,t1,t2) ->
      let tyT1 = typeof ctx t1 in
      if (=) tyT1 (typeof ctx t2) then tyT1
-     else error fi "type mismatch in pair"     
+     else error fi "type mismatch in pair"
+  | TmMkpair(fi,t1,t2) ->
+     let tyT1 = typeof ctx t1 in
+     if (=) tyT1 (typeof ctx t2) then tyT1
+     else error fi "type mismatch in pair"    
   | TmIf(fi,t1,t2,t3) ->
      if (=) (typeof ctx t1) TyBool then
        let tyT2 = typeof ctx t2 in

@@ -18,6 +18,7 @@ type term =
   | TmIf of info * term * term * term
   | TmUnit of info
   | TmLet of info * string * term * term
+  | TmPair of info * term * term
 
 type binding =
     NameBind 

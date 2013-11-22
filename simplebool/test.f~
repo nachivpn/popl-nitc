@@ -1,8 +1,0 @@
-/* Examples for testing */
-
-
- 
- let x=true in x;
- unit;
- (lambda x:Bool->Bool. if x false then true else false) 
-   (lambda x:Bool. if x then false else true); 

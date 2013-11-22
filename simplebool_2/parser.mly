@@ -175,6 +175,8 @@ AppTerm :
           let e1 = $1 ctx in
           let e2 = $2 ctx in
           TmApp(tmInfo e1,e1,e2) }
+  | PAIR ATerm ATerm
+     {  fun ctx -> TmMkpair($1,$2 ctx,$3 ctx) }
   
 /* Atomic terms are ones that never require extra parentheses */
 ATerm :

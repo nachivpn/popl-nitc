@@ -1,4 +1,5 @@
 /* Examples for testing */
 
 
- let x=true in {x,false};
+pair unit unit; 
+let x=true in {x,false};
