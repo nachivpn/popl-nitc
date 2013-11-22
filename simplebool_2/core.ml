@@ -4,6 +4,7 @@ open Support.Error
 open Support.Pervasive
 
 (* ------------------------   EVALUATION  ------------------------ *)
+(*Note: TmMkpair(_,_,_) is the tree node of "pair _ _" while TmPair(_,_,_) is it's normal form*)
 
 let rec isval ctx t = match t with
     TmTrue(_)  -> true
@@ -67,6 +68,7 @@ let rec eval ctx t =
   with NoRuleApplies -> t
 
 (* ------------------------   TYPING  ------------------------ *)
+(*Note: TyCp is the type of a pair i.e. type x type*)
 
 let rec typeof ctx t =
   match t with
@@ -89,6 +91,8 @@ let rec typeof ctx t =
       TyBool
   | TmUnit(fi) -> 
       TyUnit
+  | TmPair(fi,t1,t2) ->
+	TyCp(typeof ctx t1,typeof ctx t2)
   | TmLet(fi,x,t1,t2) ->
      let tyT1 = typeof ctx t1  in
      let ctx' = addbinding ctx x (VarBind(tyT1)) in

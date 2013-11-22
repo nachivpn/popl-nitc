@@ -1,6 +1,7 @@
 /* Examples for testing */
 
-pair unit unit; 
-fst pair (lambda x:Bool.x) (lambda y:Bool.y) ;
-let x = pair false true in fst x ;
-let x = pair false true in snd x ;
+pair true false;
+pair (pair true true) (pair false false);
+fst pair true false;
+snd pair true false;
+snd pair (pair true true) (pair false false);
