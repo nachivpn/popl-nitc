@@ -9,6 +9,7 @@ type ty =
     TyArr of ty * ty
   | TyBool
   | TyUnit
+  | TyCp of ty * ty
 
 type term =
     TmVar of info * int * int
@@ -21,6 +22,7 @@ type term =
   | TmLet of info * string * term * term
   | TmPair of info * term * term
   | TmMkpair of info * term * term
+  | TmFst of info * term
 
 type binding =
     NameBind 
@@ -85,6 +87,7 @@ let tmmap onvar c t =
   | TmLet(fi,x,t1,t2) -> TmLet(fi, x, walk c t1, walk (c+1) t2) 
   | TmPair(fi,t1,t2) -> TmPair(fi,walk c t1,walk c t2)
   | TmMkpair(fi,t1,t2) -> TmMkpair(fi,walk c t1,walk c t2)
+  | TmFst(fi,t1) -> TmFst(fi, walk c t1)
   in walk c t
 
 let termShiftAbove d c t =
@@ -135,6 +138,7 @@ let tmInfo t = match t with
   | TmUnit(fi) -> fi
   | TmLet(fi,_,_,_) -> fi
   | TmPair(fi,_,_) -> fi
+  | TmMkpair(fi,_,_) -> fi
 (* ---------------------------------------------------------------------- *)
 (* Printing *)
 
@@ -173,6 +177,14 @@ and printty_ArrowType outer  tyT = match tyT with
       if outer then print_space() else break();
       printty_ArrowType outer tyT2;
       cbox()
+  | TyCp(tyT1,tyT2) ->
+     obox0();
+     printty_AType false tyT1;
+     if outer then pr " ";
+     pr "*";
+     if outer then print_space() else break();
+     printty_ArrowType outer tyT2;
+     cbox()
   | tyT -> printty_AType outer tyT
 
 and printty_AType outer tyT = match tyT with
@@ -250,5 +262,3 @@ let printtm ctx t = printtm_Term true ctx t
 let prbinding ctx b = match b with
     NameBind -> ()
   | VarBind(tyT) -> pr ": "; printty tyT 
-
-

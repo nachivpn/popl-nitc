@@ -1,5 +1,5 @@
 /* Examples for testing */
 
-
 pair unit unit; 
-let x=true in {x,false};
+pair true false;
+let x = pair false true in fst x ;

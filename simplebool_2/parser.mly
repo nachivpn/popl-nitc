@@ -175,8 +175,10 @@ AppTerm :
           let e1 = $1 ctx in
           let e2 = $2 ctx in
           TmApp(tmInfo e1,e1,e2) }
-  | PAIR ATerm ATerm
+  | PAIR AppTerm AppTerm
      {  fun ctx -> TmMkpair($1,$2 ctx,$3 ctx) }
+  | FST AppTerm
+     { fun ctx -> TmFst($1,$2 ctx) }
   
 /* Atomic terms are ones that never require extra parentheses */
 ATerm :
@@ -192,6 +194,6 @@ ATerm :
   | UNIT
       { fun ctx -> TmUnit($1) }
   | LCURLY Term COMMA Term RCURLY
-      { fun ctx -> TmPair($1,$2 ctx,$4 ctx) }
+      { fun ctx -> TmMkpair($1,$2 ctx,$4 ctx) }
 
 /*   */

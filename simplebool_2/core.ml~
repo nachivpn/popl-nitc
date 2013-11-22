@@ -10,6 +10,7 @@ let rec isval ctx t = match t with
   | TmFalse(_) -> true
   | TmAbs(_,_,_,_) -> true
   | TmUnit(_) -> true
+  | TmPair(_,_,_) -> true
   | _ -> false
 
 exception NoRuleApplies
@@ -35,20 +36,19 @@ let rec eval1 ctx t = match t with
   | TmLet(fi,x,t1,t2) ->
       let t1' = eval1 ctx t1 in
       TmLet(fi,x,t1',t2)
-  | TmPair(fi,v1,t2) when isval ctx v1 -> 
-      let t2' = eval1 ctx t2 in
-      TmPair(fi,v1,t2')
-  | TmPair(fi,t1,t2) ->
-      let t1'= eval1 ctx t1 in
-      TmPair(fi,t1',t2)
   | TmMkpair(fi,v1,v2) when (isval ctx v1) & (isval ctx v2) -> 
       TmPair(fi,v1,v2)
   | TmMkpair(fi,v1,t2) when isval ctx v1 -> 
       let t2' = eval1 ctx t2 in
-      TmPair(fi,v1,t2')
+      TmMkpair(fi,v1,t2')
   | TmMkpair(fi,t1,t2) ->
       let t1'= eval1 ctx t1 in
-      TmPair(fi,t1',t2)
+      TmMkpair(fi,t1',t2)
+  | TmFst(fi,vp1) when isval ctx vp1->
+      (match vp1 with 
+	TmPair(fi,v1,v2) -> v1
+	| _ -> raise NoRuleApplies )
+      
   | _ -> 
       raise NoRuleApplies
 
@@ -84,14 +84,15 @@ let rec typeof ctx t =
      let tyT1 = typeof ctx t1  in
      let ctx' = addbinding ctx x (VarBind(tyT1)) in
      (typeof ctx' t2)
-  | TmPair(fi,t1,t2) ->
+  | TmMkpair(fi,t1,t2) ->
      let tyT1 = typeof ctx t1 in
-     if (=) tyT1 (typeof ctx t2) then tyT1
-     else error fi "type mismatch in pair"
-  | TmPair(fi,t1,t2) ->
-     let tyT1 = typeof ctx t1 in
-     if (=) tyT1 (typeof ctx t2) then tyT1
+     if (=) tyT1 (typeof ctx t2) then TyCp(tyT1,tyT1)
      else error fi "type mismatch in pair"    
+  | TmFst(fi,t1) ->
+     let tyT1 = typeof ctx t1 in
+     (match tyT1 with 
+	TyCp(tyT11,tyT12) -> tyT11
+	| _ -> error fi "wrong argument for fst")
   | TmIf(fi,t1,t2,t3) ->
      if (=) (typeof ctx t1) TyBool then
        let tyT2 = typeof ctx t2 in

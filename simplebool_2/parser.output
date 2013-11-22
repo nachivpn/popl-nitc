@@ -25,16 +25,17 @@
 
   17  AppTerm : ATerm
   18          | AppTerm ATerm
-  19          | PAIR ATerm ATerm
+  19          | PAIR AppTerm AppTerm
+  20          | FST AppTerm
 
-  20  ATerm : LPAREN Term RPAREN
-  21        | LCID
-  22        | TRUE
-  23        | FALSE
-  24        | UNIT
-  25        | LCURLY Term COMMA Term RCURLY
+  21  ATerm : LPAREN Term RPAREN
+  22        | LCID
+  23        | TRUE
+  24        | FALSE
+  25        | UNIT
+  26        | LCURLY Term COMMA Term RCURLY
 
-  26  %entry% : '\001' toplevel
+  27  %entry% : '\001' toplevel
 
 state 0
 	$accept : . %entry% $end  (0)
@@ -46,26 +47,27 @@ state 0
 
 
 state 1
-	%entry% : '\001' . toplevel  (26)
+	%entry% : '\001' . toplevel  (27)
 
 	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 10
-	EOF  shift 11
-	LCURLY  shift 12
-	LPAREN  shift 13
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 11
+	EOF  shift 12
+	LCURLY  shift 13
+	LPAREN  shift 14
 	.  error
 
-	toplevel  goto 14
-	Command  goto 15
-	Term  goto 16
-	AppTerm  goto 17
-	ATerm  goto 18
+	toplevel  goto 15
+	Command  goto 16
+	Term  goto 17
+	AppTerm  goto 18
+	ATerm  goto 19
 
 
 state 2
@@ -75,164 +77,187 @@ state 2
 
 
 state 3
-	AppTerm : PAIR . ATerm ATerm  (19)
+	AppTerm : PAIR . AppTerm AppTerm  (19)
 
-	UNIT  shift 4
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
 	.  error
 
-	ATerm  goto 20
+	AppTerm  goto 21
+	ATerm  goto 19
 
 
 state 4
-	ATerm : UNIT .  (24)
+	AppTerm : FST . AppTerm  (20)
 
-	.  reduce 24
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	AppTerm  goto 22
+	ATerm  goto 19
 
 
 state 5
-	Term : LET . LCID EQ Term IN Term  (16)
+	ATerm : UNIT .  (25)
 
-	LCID  shift 21
-	.  error
+	.  reduce 25
 
 
 state 6
-	Term : LAMBDA . LCID COLON Type DOT Term  (13)
-	Term : LAMBDA . USCORE COLON Type DOT Term  (14)
+	Term : LET . LCID EQ Term IN Term  (16)
 
-	LCID  shift 22
-	USCORE  shift 23
+	LCID  shift 23
 	.  error
 
 
 state 7
-	Term : IF . Term THEN Term ELSE Term  (15)
+	Term : LAMBDA . LCID COLON Type DOT Term  (13)
+	Term : LAMBDA . USCORE COLON Type DOT Term  (14)
 
-	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	LCID  shift 24
+	USCORE  shift 25
 	.  error
-
-	Term  goto 24
-	AppTerm  goto 17
-	ATerm  goto 18
 
 
 state 8
-	ATerm : TRUE .  (22)
+	Term : IF . Term THEN Term ELSE Term  (15)
 
-	.  reduce 22
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	Term  goto 26
+	AppTerm  goto 18
+	ATerm  goto 19
 
 
 state 9
-	ATerm : FALSE .  (23)
+	ATerm : TRUE .  (23)
 
 	.  reduce 23
 
 
 state 10
-	Command : LCID . Binder  (4)
-	ATerm : LCID .  (21)
+	ATerm : FALSE .  (24)
 
-	COLON  shift 25
-	UNIT  reduce 21
-	TRUE  reduce 21
-	FALSE  reduce 21
-	LCID  reduce 21
-	LCURLY  reduce 21
-	LPAREN  reduce 21
-	SEMI  reduce 21
-
-	Binder  goto 26
+	.  reduce 24
 
 
 state 11
+	Command : LCID . Binder  (4)
+	ATerm : LCID .  (22)
+
+	COLON  shift 27
+	UNIT  reduce 22
+	TRUE  reduce 22
+	FALSE  reduce 22
+	LCID  reduce 22
+	LCURLY  reduce 22
+	LPAREN  reduce 22
+	SEMI  reduce 22
+
+	Binder  goto 28
+
+
+state 12
 	toplevel : EOF .  (1)
 
 	.  reduce 1
 
 
-state 12
-	ATerm : LCURLY . Term COMMA Term RCURLY  (25)
-
-	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
-	.  error
-
-	Term  goto 27
-	AppTerm  goto 17
-	ATerm  goto 18
-
-
 state 13
-	ATerm : LPAREN . Term RPAREN  (20)
+	ATerm : LCURLY . Term COMMA Term RCURLY  (26)
 
 	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
 	.  error
 
-	Term  goto 28
-	AppTerm  goto 17
-	ATerm  goto 18
+	Term  goto 29
+	AppTerm  goto 18
+	ATerm  goto 19
 
 
 state 14
-	%entry% : '\001' toplevel .  (26)
+	ATerm : LPAREN . Term RPAREN  (21)
 
-	.  reduce 26
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	Term  goto 30
+	AppTerm  goto 18
+	ATerm  goto 19
 
 
 state 15
-	toplevel : Command . SEMI toplevel  (2)
+	%entry% : '\001' toplevel .  (27)
 
-	SEMI  shift 29
-	.  error
+	.  reduce 27
 
 
 state 16
+	toplevel : Command . SEMI toplevel  (2)
+
+	SEMI  shift 31
+	.  error
+
+
+state 17
 	Command : Term .  (3)
 
 	.  reduce 3
 
 
-state 17
+state 18
 	Term : AppTerm .  (12)
 	AppTerm : AppTerm . ATerm  (18)
 
-	UNIT  shift 4
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	UNIT  shift 5
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
 	IN  reduce 12
 	THEN  reduce 12
 	ELSE  reduce 12
@@ -241,451 +266,535 @@ state 17
 	RPAREN  reduce 12
 	SEMI  reduce 12
 
-	ATerm  goto 30
+	ATerm  goto 32
 
 
-state 18
+state 19
 	AppTerm : ATerm .  (17)
 
 	.  reduce 17
 
 
-state 19
-	ATerm : LCID .  (21)
-
-	.  reduce 21
-
-
 state 20
-	AppTerm : PAIR ATerm . ATerm  (19)
+	ATerm : LCID .  (22)
 
-	UNIT  shift 4
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
-	.  error
-
-	ATerm  goto 31
+	.  reduce 22
 
 
 state 21
-	Term : LET LCID . EQ Term IN Term  (16)
+	AppTerm : AppTerm . ATerm  (18)
+	AppTerm : PAIR AppTerm . AppTerm  (19)
 
-	EQ  shift 32
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
 	.  error
 
+	AppTerm  goto 33
+	ATerm  goto 34
 
+
+22: shift/reduce conflict (shift 5, reduce 20) on UNIT
+22: shift/reduce conflict (shift 9, reduce 20) on TRUE
+22: shift/reduce conflict (shift 10, reduce 20) on FALSE
+22: shift/reduce conflict (shift 20, reduce 20) on LCID
+22: shift/reduce conflict (shift 13, reduce 20) on LCURLY
+22: shift/reduce conflict (shift 14, reduce 20) on LPAREN
 state 22
-	Term : LAMBDA LCID . COLON Type DOT Term  (13)
+	AppTerm : AppTerm . ATerm  (18)
+	AppTerm : FST AppTerm .  (20)
 
-	COLON  shift 33
-	.  error
+	UNIT  shift 5
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	PAIR  reduce 20
+	FST  reduce 20
+	IN  reduce 20
+	THEN  reduce 20
+	ELSE  reduce 20
+	COMMA  reduce 20
+	RCURLY  reduce 20
+	RPAREN  reduce 20
+	SEMI  reduce 20
+
+	ATerm  goto 32
 
 
 state 23
-	Term : LAMBDA USCORE . COLON Type DOT Term  (14)
+	Term : LET LCID . EQ Term IN Term  (16)
 
-	COLON  shift 34
+	EQ  shift 35
 	.  error
 
 
 state 24
-	Term : IF Term . THEN Term ELSE Term  (15)
+	Term : LAMBDA LCID . COLON Type DOT Term  (13)
 
-	THEN  shift 35
+	COLON  shift 36
 	.  error
 
 
 state 25
-	Binder : COLON . Type  (5)
+	Term : LAMBDA USCORE . COLON Type DOT Term  (14)
 
-	UUNIT  shift 36
-	BOOL  shift 37
-	LPAREN  shift 38
+	COLON  shift 37
 	.  error
-
-	Type  goto 39
-	ArrowType  goto 40
-	AType  goto 41
 
 
 state 26
+	Term : IF Term . THEN Term ELSE Term  (15)
+
+	THEN  shift 38
+	.  error
+
+
+state 27
+	Binder : COLON . Type  (5)
+
+	UUNIT  shift 39
+	BOOL  shift 40
+	LPAREN  shift 41
+	.  error
+
+	Type  goto 42
+	ArrowType  goto 43
+	AType  goto 44
+
+
+state 28
 	Command : LCID Binder .  (4)
 
 	.  reduce 4
 
 
-state 27
-	ATerm : LCURLY Term . COMMA Term RCURLY  (25)
-
-	COMMA  shift 42
-	.  error
-
-
-state 28
-	ATerm : LPAREN Term . RPAREN  (20)
-
-	RPAREN  shift 43
-	.  error
-
-
 state 29
-	toplevel : Command SEMI . toplevel  (2)
+	ATerm : LCURLY Term . COMMA Term RCURLY  (26)
 
-	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 10
-	EOF  shift 11
-	LCURLY  shift 12
-	LPAREN  shift 13
+	COMMA  shift 45
 	.  error
-
-	toplevel  goto 44
-	Command  goto 15
-	Term  goto 16
-	AppTerm  goto 17
-	ATerm  goto 18
 
 
 state 30
+	ATerm : LPAREN Term . RPAREN  (21)
+
+	RPAREN  shift 46
+	.  error
+
+
+state 31
+	toplevel : Command SEMI . toplevel  (2)
+
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 11
+	EOF  shift 12
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	toplevel  goto 47
+	Command  goto 16
+	Term  goto 17
+	AppTerm  goto 18
+	ATerm  goto 19
+
+
+state 32
 	AppTerm : AppTerm ATerm .  (18)
 
 	.  reduce 18
 
 
-state 31
-	AppTerm : PAIR ATerm ATerm .  (19)
-
-	.  reduce 19
-
-
-state 32
-	Term : LET LCID EQ . Term IN Term  (16)
-
-	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
-	.  error
-
-	Term  goto 45
-	AppTerm  goto 17
-	ATerm  goto 18
-
-
+33: shift/reduce conflict (shift 5, reduce 19) on UNIT
+33: shift/reduce conflict (shift 9, reduce 19) on TRUE
+33: shift/reduce conflict (shift 10, reduce 19) on FALSE
+33: shift/reduce conflict (shift 20, reduce 19) on LCID
+33: shift/reduce conflict (shift 13, reduce 19) on LCURLY
+33: shift/reduce conflict (shift 14, reduce 19) on LPAREN
 state 33
-	Term : LAMBDA LCID COLON . Type DOT Term  (13)
+	AppTerm : AppTerm . ATerm  (18)
+	AppTerm : PAIR AppTerm AppTerm .  (19)
 
-	UUNIT  shift 36
-	BOOL  shift 37
-	LPAREN  shift 38
-	.  error
+	UNIT  shift 5
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	PAIR  reduce 19
+	FST  reduce 19
+	IN  reduce 19
+	THEN  reduce 19
+	ELSE  reduce 19
+	COMMA  reduce 19
+	RCURLY  reduce 19
+	RPAREN  reduce 19
+	SEMI  reduce 19
 
-	Type  goto 46
-	ArrowType  goto 40
-	AType  goto 41
+	ATerm  goto 32
 
 
+34: reduce/reduce conflict (reduce 17, reduce 18) on PAIR
+34: reduce/reduce conflict (reduce 17, reduce 18) on FST
+34: reduce/reduce conflict (reduce 17, reduce 18) on UNIT
+34: reduce/reduce conflict (reduce 17, reduce 18) on TRUE
+34: reduce/reduce conflict (reduce 17, reduce 18) on FALSE
+34: reduce/reduce conflict (reduce 17, reduce 18) on LCID
+34: reduce/reduce conflict (reduce 17, reduce 18) on LCURLY
+34: reduce/reduce conflict (reduce 17, reduce 18) on LPAREN
 state 34
-	Term : LAMBDA USCORE COLON . Type DOT Term  (14)
+	AppTerm : ATerm .  (17)
+	AppTerm : AppTerm ATerm .  (18)
 
-	UUNIT  shift 36
-	BOOL  shift 37
-	LPAREN  shift 38
-	.  error
-
-	Type  goto 47
-	ArrowType  goto 40
-	AType  goto 41
+	.  reduce 17
 
 
 state 35
-	Term : IF Term THEN . Term ELSE Term  (15)
+	Term : LET LCID EQ . Term IN Term  (16)
 
 	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
 	.  error
 
 	Term  goto 48
-	AppTerm  goto 17
-	ATerm  goto 18
+	AppTerm  goto 18
+	ATerm  goto 19
 
 
 state 36
+	Term : LAMBDA LCID COLON . Type DOT Term  (13)
+
+	UUNIT  shift 39
+	BOOL  shift 40
+	LPAREN  shift 41
+	.  error
+
+	Type  goto 49
+	ArrowType  goto 43
+	AType  goto 44
+
+
+state 37
+	Term : LAMBDA USCORE COLON . Type DOT Term  (14)
+
+	UUNIT  shift 39
+	BOOL  shift 40
+	LPAREN  shift 41
+	.  error
+
+	Type  goto 50
+	ArrowType  goto 43
+	AType  goto 44
+
+
+state 38
+	Term : IF Term THEN . Term ELSE Term  (15)
+
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	Term  goto 51
+	AppTerm  goto 18
+	ATerm  goto 19
+
+
+state 39
 	AType : UUNIT .  (9)
 
 	.  reduce 9
 
 
-state 37
+state 40
 	AType : BOOL .  (8)
 
 	.  reduce 8
 
 
-state 38
+state 41
 	AType : LPAREN . Type RPAREN  (7)
 
-	UUNIT  shift 36
-	BOOL  shift 37
-	LPAREN  shift 38
+	UUNIT  shift 39
+	BOOL  shift 40
+	LPAREN  shift 41
 	.  error
 
-	Type  goto 49
-	ArrowType  goto 40
-	AType  goto 41
+	Type  goto 52
+	ArrowType  goto 43
+	AType  goto 44
 
 
-state 39
+state 42
 	Binder : COLON Type .  (5)
 
 	.  reduce 5
 
 
-state 40
+state 43
 	Type : ArrowType .  (6)
 
 	.  reduce 6
 
 
-state 41
+state 44
 	ArrowType : AType . ARROW ArrowType  (10)
 	ArrowType : AType .  (11)
 
-	ARROW  shift 50
+	ARROW  shift 53
 	DOT  reduce 11
 	RPAREN  reduce 11
 	SEMI  reduce 11
 
 
-state 42
-	ATerm : LCURLY Term COMMA . Term RCURLY  (25)
+state 45
+	ATerm : LCURLY Term COMMA . Term RCURLY  (26)
 
 	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
 	.  error
 
-	Term  goto 51
-	AppTerm  goto 17
-	ATerm  goto 18
+	Term  goto 54
+	AppTerm  goto 18
+	ATerm  goto 19
 
 
-state 43
-	ATerm : LPAREN Term RPAREN .  (20)
+state 46
+	ATerm : LPAREN Term RPAREN .  (21)
 
-	.  reduce 20
+	.  reduce 21
 
 
-state 44
+state 47
 	toplevel : Command SEMI toplevel .  (2)
 
 	.  reduce 2
 
 
-state 45
+state 48
 	Term : LET LCID EQ Term . IN Term  (16)
 
-	IN  shift 52
-	.  error
-
-
-state 46
-	Term : LAMBDA LCID COLON Type . DOT Term  (13)
-
-	DOT  shift 53
-	.  error
-
-
-state 47
-	Term : LAMBDA USCORE COLON Type . DOT Term  (14)
-
-	DOT  shift 54
-	.  error
-
-
-state 48
-	Term : IF Term THEN Term . ELSE Term  (15)
-
-	ELSE  shift 55
+	IN  shift 55
 	.  error
 
 
 state 49
-	AType : LPAREN Type . RPAREN  (7)
+	Term : LAMBDA LCID COLON Type . DOT Term  (13)
 
-	RPAREN  shift 56
+	DOT  shift 56
 	.  error
 
 
 state 50
-	ArrowType : AType ARROW . ArrowType  (10)
+	Term : LAMBDA USCORE COLON Type . DOT Term  (14)
 
-	UUNIT  shift 36
-	BOOL  shift 37
-	LPAREN  shift 38
+	DOT  shift 57
 	.  error
-
-	ArrowType  goto 57
-	AType  goto 41
 
 
 state 51
-	ATerm : LCURLY Term COMMA Term . RCURLY  (25)
+	Term : IF Term THEN Term . ELSE Term  (15)
 
-	RCURLY  shift 58
+	ELSE  shift 58
 	.  error
 
 
 state 52
-	Term : LET LCID EQ Term IN . Term  (16)
+	AType : LPAREN Type . RPAREN  (7)
 
-	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	RPAREN  shift 59
 	.  error
-
-	Term  goto 59
-	AppTerm  goto 17
-	ATerm  goto 18
 
 
 state 53
-	Term : LAMBDA LCID COLON Type DOT . Term  (13)
+	ArrowType : AType ARROW . ArrowType  (10)
 
-	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	UUNIT  shift 39
+	BOOL  shift 40
+	LPAREN  shift 41
 	.  error
 
-	Term  goto 60
-	AppTerm  goto 17
-	ATerm  goto 18
+	ArrowType  goto 60
+	AType  goto 44
 
 
 state 54
-	Term : LAMBDA USCORE COLON Type DOT . Term  (14)
+	ATerm : LCURLY Term COMMA Term . RCURLY  (26)
 
-	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	RCURLY  shift 61
 	.  error
-
-	Term  goto 61
-	AppTerm  goto 17
-	ATerm  goto 18
 
 
 state 55
-	Term : IF Term THEN Term ELSE . Term  (15)
+	Term : LET LCID EQ Term IN . Term  (16)
 
 	PAIR  shift 3
-	UNIT  shift 4
-	LET  shift 5
-	LAMBDA  shift 6
-	IF  shift 7
-	TRUE  shift 8
-	FALSE  shift 9
-	LCID  shift 19
-	LCURLY  shift 12
-	LPAREN  shift 13
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
 	.  error
 
 	Term  goto 62
-	AppTerm  goto 17
-	ATerm  goto 18
+	AppTerm  goto 18
+	ATerm  goto 19
 
 
 state 56
+	Term : LAMBDA LCID COLON Type DOT . Term  (13)
+
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	Term  goto 63
+	AppTerm  goto 18
+	ATerm  goto 19
+
+
+state 57
+	Term : LAMBDA USCORE COLON Type DOT . Term  (14)
+
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	Term  goto 64
+	AppTerm  goto 18
+	ATerm  goto 19
+
+
+state 58
+	Term : IF Term THEN Term ELSE . Term  (15)
+
+	PAIR  shift 3
+	FST  shift 4
+	UNIT  shift 5
+	LET  shift 6
+	LAMBDA  shift 7
+	IF  shift 8
+	TRUE  shift 9
+	FALSE  shift 10
+	LCID  shift 20
+	LCURLY  shift 13
+	LPAREN  shift 14
+	.  error
+
+	Term  goto 65
+	AppTerm  goto 18
+	ATerm  goto 19
+
+
+state 59
 	AType : LPAREN Type RPAREN .  (7)
 
 	.  reduce 7
 
 
-state 57
+state 60
 	ArrowType : AType ARROW ArrowType .  (10)
 
 	.  reduce 10
 
 
-state 58
-	ATerm : LCURLY Term COMMA Term RCURLY .  (25)
+state 61
+	ATerm : LCURLY Term COMMA Term RCURLY .  (26)
 
-	.  reduce 25
+	.  reduce 26
 
 
-state 59
+state 62
 	Term : LET LCID EQ Term IN Term .  (16)
 
 	.  reduce 16
 
 
-state 60
+state 63
 	Term : LAMBDA LCID COLON Type DOT Term .  (13)
 
 	.  reduce 13
 
 
-state 61
+state 64
 	Term : LAMBDA USCORE COLON Type DOT Term .  (14)
 
 	.  reduce 14
 
 
-state 62
+state 65
 	Term : IF Term THEN Term ELSE Term .  (15)
 
 	.  reduce 15
 
 
+State 22 contains 6 shift/reduce conflicts.
+State 33 contains 6 shift/reduce conflicts.
+State 34 contains 8 reduce/reduce conflicts.
+
+
 59 terminals, 11 nonterminals
-27 grammar rules, 63 states
+28 grammar rules, 66 states

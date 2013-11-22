@@ -8,6 +8,7 @@ type ty =
     TyArr of ty * ty
   | TyBool
   | TyUnit
+  | TyCp of ty * ty
 
 type term =
     TmVar of info * int * int
@@ -20,6 +21,7 @@ type term =
   | TmLet of info * string * term * term
   | TmPair of info * term * term
   | TmMkpair of info * term * term
+  | TmFst of info * term
 
 type binding =
     NameBind 
