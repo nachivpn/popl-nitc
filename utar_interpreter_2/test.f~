@@ -1,3 +1,0 @@
-/* Examples for testing */
-
-if 0 then (pred 0) else 1;
