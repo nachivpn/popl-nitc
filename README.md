@@ -8,8 +8,8 @@ The source code of the following variants of lambda calculus interpreter where s
 	- 'unit' type (Analogous to void type)
 	- 'make-pair' function (Takes two arguments and returns a pair)
 - [Simple Boolean](simplebool_2) language interpreter with extensions:
-	- 'fst' functiona (Returns the first element of a pair given as argument)
-	- 'snd' functiona (Returns the second element of a pair given as argument)
+	- 'fst' function (Returns the first element of a pair given as argument)
+	- 'snd' function (Returns the second element of a pair given as argument)
 - [Untyped arithmetic expressions] (utar_interpreter) language interpreter with extensions:
 	- 'and' operator
 	- 'or' operator
@@ -20,11 +20,11 @@ The source code of the following variants of lambda calculus interpreter where s
 
 Run Instructions for an interpreter:
 
-	# To build the executable f
+	# To build the executable 'f'
 		make
 	# To run executable file on test.f
 		./f < test.f
-	# To make file and run on test file
+	# To build and run the executable on test file
 		make test
 	# To remove all intermediate and temporary files
 		make clean
